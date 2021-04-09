@@ -1,0 +1,20 @@
+edition: 1.0.0          #  命令行YAML规范版本，遵循语义化版本（Semantic Versioning）规范
+name: ramApp            #  项目名称
+access: aliyun-release  #  秘钥别名
+
+services:
+  ram-test: #  服务名称
+    component: ram  # 组件名称
+    props: #  组件的属性值
+      name: test-ram # 必填
+      description: test-ram
+      service: fc.aliyuncs.com # 授权主题
+      policies:
+        - FC-post-log-to-qwe123-lllll23123
+        - AdministratorAccess
+        - name: policy-test
+          statement: # 策略配置
+            - Effect: Deny
+              Action:
+                - sts:AssumeRole
+              Resource: '*'

@@ -1,0 +1,73 @@
+Type: Component
+Name: ram
+Provider:
+  - 阿里云
+Version: 0.0.1
+Description: 阿里云RAM产品工具
+HomePage: https://github.com/Serverless-Devs
+Tags: #标签详情
+  - 权限
+  - 策略
+Category: 基础云服务
+Commands:
+  deploy: 创建角色/策略
+  delete: 删除角色/策略
+Service:
+  Others:
+    Runtime: Node.JS
+    Authorities:
+      - 创建角色/策略
+      - 删除角色/策略
+Properties:
+  name:
+    Description: 角色名称
+    Required: true
+    Type:
+      - String
+  description:
+    Description: 角色描述，仅第一次创建生效
+    Required: false
+    Type:
+      - String
+  service:
+    Description: 角色授权主体，statement 配置后不生效， statement 和 service 必填其一
+    Required: false
+    Type:
+      - String
+  policies:
+    Description: 策略配置
+    Required: false
+    Type:
+      - List:
+          - String[简单配置]
+          - Strcut[复杂配置]:
+              name:
+                Description: 策略名
+                Required: false
+                Type:
+                  - String
+              statement:
+                Description: 角色授权 statement，配置后不生效 service 不生效， statement 和 service 必填其一
+                Required: false
+                Type:
+                  - Strcut:
+                      Effect:
+                        Description: Effect设置，同意或拒绝
+                        Required: true
+                        Type:
+                          - Enum:
+                              - Deny
+                              - Allow
+                      Action:
+                        Description: 行为，动作
+                        Required: true
+                        Example: sts:AssumeRole
+                        Type:
+                          - <String>List
+                      Resource:
+                        Description: 资源
+                        Required: true
+                        Example: '*'
+                        Type:
+                          - String
+
