@@ -4,7 +4,7 @@
   "version": "0.0.2",
   "dependencies": {
     "@alicloud/ram": "^1.0.0",
-    "@serverless-devs/core": "0.0.29",
+    "@serverless-devs/core": "^0.0.52",
     "lodash": "^4.17.20",
     "promise-retry": "^2.0.1"
   },

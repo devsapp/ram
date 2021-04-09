@@ -28,7 +28,7 @@
 | Effect  | true | string  | - | Effect设置，同意或拒绝  |  -  |
 | Action  | true | <string>list  | - | 行为，动作  |  -   |
 | Resource  | true | string  | - | 资源  |  -  |
-
+> 更详细信息可查看 [权限策略语法和结构](https://help.aliyun.com/document_detail/93739.html)
 
 ------- 
 
@@ -39,5 +39,5 @@
 ````
 $ npm i
 
-$ npm run build:ts && npm run package-zip
+$ npm run build:ts
 ````
