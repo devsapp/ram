@@ -2,7 +2,7 @@ Type: Component
 Name: ram
 Provider:
   - 阿里云
-Version: 0.0.2
+Version: 0.0.3
 Description: 阿里云RAM产品工具
 HomePage: https://github.com/devsapp/ram
 Tags: #标签详情
@@ -62,7 +62,7 @@ Properties:
                         Required: true
                         Example: sts:AssumeRole
                         Type:
-                          - <String>List
+                          - List<String>
                       Resource:
                         Description: 资源
                         Required: true
