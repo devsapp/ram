@@ -62,7 +62,7 @@ Properties:
                         Required: true
                         Example: sts:AssumeRole
                         Type:
-                          - <String>List
+                          - List<String>
                       Resource:
                         Description: 资源
                         Required: true
