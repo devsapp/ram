@@ -61,7 +61,7 @@ export default class R {
 
     await retry(async (retry, times) => {
       try {
-        this.logger.info(`Check plicy ${policyName} exist start...`);
+        this.logger.debug(`Check plicy ${policyName} exist start...`);
         const onlinePolicyConfig = await this.ramClient.getPolicy({
           PolicyType: policyType,
           PolicyName: policyName,
@@ -76,7 +76,7 @@ export default class R {
         );
 
         policyNameAvailable = true;
-        this.logger.info(`Check plicy ${policyName} exist.`);
+        this.logger.debug(`Check plicy ${policyName} exist.`);
         if (!statement || _.isEqual(onlinePolicyDocument.Statement, statement)) {
           return;
         }
@@ -113,7 +113,7 @@ export default class R {
       const { Arn, AssumeRolePolicyDocument } = roleResponse.Role;
 
       if (roleDocument && JSON.stringify(roleDocument) !== AssumeRolePolicyDocument) {
-        this.logger.info(`${roleName} authorization policy is inconsistent with online.`);
+        this.logger.debug(`${roleName} authorization policy is inconsistent with online.`);
         await this.updateRole(roleName, roleDocument);
       }
 
@@ -300,7 +300,7 @@ export default class R {
         );
 
         if (!policyNameAvailable) {
-          this.logger.info(`Check plicy ${name} does not exist.`);
+          this.logger.debug(`Check plicy ${name} does not exist.`);
           await this.createPolicy(name, statement, description);
         }
 
@@ -352,13 +352,13 @@ export default class R {
 
     for (const { name, type } of policyNamesArray) {
       await retry(async (retry, times) => {
-        this.logger.info(`Attach policy(${name}) to ${roleName} start...`);
+        this.logger.debug(`Attach policy(${name}) to ${roleName} start...`);
         try {
           const policy = policies.Policies.Policy.find((item) => {
             return _.toLower(item.PolicyName) === _.toLower(name);
           });
           if (policy) {
-            this.logger.info(`Policy(${name}) already exists in ${roleName}, skip attach.`);
+            this.logger.debug(`Policy(${name}) already exists in ${roleName}, skip attach.`);
           } else {
             await this.ramClient.attachPolicyToRole({
               PolicyType: type,
@@ -366,7 +366,7 @@ export default class R {
               RoleName: roleName,
             });
 
-            this.logger.info(`Attach policy(${name}) to ${roleName} success.`);
+            this.logger.debug(`Attach policy(${name}) to ${roleName} success.`);
           }
         } catch (ex) {
           if (ex.code === 'NoPermission') {
