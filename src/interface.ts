@@ -1,6 +1,10 @@
 export interface IInputs {
   props: IProperties;
-  credentials: ICredentials;
+  project: {
+    component: string;
+    access: string;
+    projectName: string;
+  };
   appName: string;
   args: string;
   path: any;

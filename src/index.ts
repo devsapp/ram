@@ -19,7 +19,7 @@ export default class RamCompoent {
       return;
     }
 
-    const credentials = await getCredential(inputs.credentials?.Alias);
+    const credentials = await getCredential(inputs.project.access);
     const properties: IProperties = inputs.props;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
@@ -49,7 +49,7 @@ export default class RamCompoent {
       return;
     }
 
-    const credentials = await getCredential(inputs.credentials?.Alias);
+    const credentials = await getCredential(inputs.project.access);
     const properties: IProperties = inputs.Properties;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
