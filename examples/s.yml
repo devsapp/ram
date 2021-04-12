@@ -4,7 +4,7 @@ name: ramApp            #  项目名称
 
 services:
   ram-test: #  服务名称
-    component: /Users/wb447188/Desktop/new-repo/ram  # 组件名称
+    component: ram  # 组件名称
     props: #  组件的属性值
       name: test-ram # 必填
       description: test-ram
