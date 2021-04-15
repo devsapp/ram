@@ -1,4 +1,5 @@
-export declare const CONTEXT = "FC-RAM";
+export declare const CONTEXT = "RAM";
+export declare const CONTEXT_NAME = "ram";
 export declare const RETRYOPTIONS: {
     retries: number;
     factor: number;

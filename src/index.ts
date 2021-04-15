@@ -1,6 +1,6 @@
-import { HLogger, ILogger, getCredential, commandParse, help } from '@serverless-devs/core';
+import { HLogger, ILogger, getCredential, commandParse, reportComponent, help } from '@serverless-devs/core';
 import _ from 'lodash';
-import { CONTEXT, HELP } from './constant';
+import { CONTEXT, HELP, CONTEXT_NAME } from './constant';
 import { IInputs, IProperties } from './interface';
 import Ram from './utils/ram';
 
@@ -20,6 +20,11 @@ export default class RamCompoent {
     }
 
     const credentials = await getCredential(inputs.project.access);
+    reportComponent(CONTEXT_NAME, {
+      uid: credentials.AccountID,
+      command: 'deploy',
+    });
+
     const properties: IProperties = inputs.props;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
@@ -50,6 +55,11 @@ export default class RamCompoent {
     }
 
     const credentials = await getCredential(inputs.project.access);
+    reportComponent(CONTEXT_NAME, {
+      uid: credentials.AccountID,
+      command: 'delete',
+    });
+
     const properties: IProperties = inputs.Properties;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
