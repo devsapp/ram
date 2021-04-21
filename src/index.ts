@@ -8,6 +8,10 @@ export default class RamCompoent {
   @HLogger(CONTEXT) logger: ILogger;
 
   async deploy(inputs: IInputs): Promise<string> {
+    // @ts-ignore
+    delete inputs.Credentials;
+    // @ts-ignore
+    delete inputs.credentials;
     this.logger.debug('Create ram start...');
     this.logger.debug(`inputs params: ${JSON.stringify(inputs)}`);
 
