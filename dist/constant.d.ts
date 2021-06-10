@@ -8,6 +8,10 @@ export declare const RETRYOPTIONS: {
 };
 export declare const HELP: ({
     header: string;
+    content: string;
+    optionList?: undefined;
+} | {
+    header: string;
     optionList: {
         name: string;
         description: string;

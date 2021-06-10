@@ -10,6 +10,10 @@ export const RETRYOPTIONS = {
 
 export const HELP = [
   {
+    header: 'Ram',
+    content: 'Operation ram resource.',
+  },
+  {
     header: 'Options',
     optionList: [
       {
