@@ -1,6 +1,7 @@
 import { HLogger, ILogger, getCredential, commandParse, reportComponent, help } from '@serverless-devs/core';
 import _ from 'lodash';
 import { CONTEXT, HELP, CONTEXT_NAME } from './constant';
+import StdoutFormatter from './common/stdout-formatter';
 import { IInputs, IProperties } from './interface';
 import Ram from './utils/ram';
 
@@ -22,6 +23,7 @@ export default class RamCompoent {
       help(HELP);
       return;
     }
+    await StdoutFormatter.initStdout();
 
     const credentials = await getCredential(inputs.project.access);
     reportComponent(CONTEXT_NAME, {
@@ -33,8 +35,9 @@ export default class RamCompoent {
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
     if (properties.service && properties.statement) {
-      this.logger.warn(
-        "The 'service' and 'statement' configurations exist at the same time, and the 'service' configuration is invalid and overwritten by the 'statement'.",
+      this.logger.warn(StdoutFormatter.stdoutFormatter.warn(
+        'deploy',
+        "The 'service' and 'statement' configurations exist at the same time, and the 'service' configuration is invalid and overwritten by the 'statement'"),
       );
     } else if (!(properties.service || properties.statement)) {
       throw new Error("'service' and 'statement' must have at least one configuration.");
@@ -57,6 +60,7 @@ export default class RamCompoent {
       help(HELP);
       return;
     }
+    await StdoutFormatter.initStdout();
 
     const credentials = await getCredential(inputs.project.access);
     reportComponent(CONTEXT_NAME, {

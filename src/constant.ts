@@ -14,6 +14,10 @@ export const HELP = [
     content: 'Operation ram resource.',
   },
   {
+    header: 'Usage',
+    content: '$ s deploy/delete <options> ',
+  },
+  {
     header: 'Options',
     optionList: [
       {
