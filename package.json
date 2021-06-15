@@ -1,7 +1,7 @@
 {
   "name": "ram",
   "main": "./dist/index.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "dependencies": {
     "@alicloud/ram": "^1.0.0",
     "@serverless-devs/core": "^0.0.x",
@@ -26,8 +26,7 @@
     "start": "npm run dev",
     "dev": "npx tsc -w -p tsconfig.json",
     "prebuild": "rimraf dist",
-    "build:ts": "npx tsc -p tsconfig.json",
-    "build:component": "npx webpack --mode=production",
+    "build": "npx tsc -p tsconfig.json",
     "publish": "npm run build:component && s platform publish",
     "test": "jest",
     "test:cov": "jest --coverage",

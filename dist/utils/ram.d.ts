@@ -7,6 +7,7 @@ interface IPolicyName {
 export default class R {
     logger: ILogger;
     ramClient: any;
+    stdoutFormatter: any;
     constructor(profile: ICredentials);
     checkPolicyNotExistOrEnsureAvailable(policyName: string, policyType: string, statement?: any): Promise<boolean>;
     checkRoleNotExistOrEnsureAvailable(roleName: string, roleDocument?: IRoleDocument): Promise<string>;
