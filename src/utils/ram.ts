@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { HLogger, ILogger } from '@serverless-devs/core';
 import _ from 'lodash';
 import Ram from '@alicloud/ram';
@@ -62,7 +63,7 @@ export default class R {
     let policyNameAvailable = false;
 
     this.logger.info(this.stdoutFormatter.check('plicy', policyName));
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
         const onlinePolicyConfig = await this.ramClient.getPolicy({
           PolicyType: policyType,
@@ -94,9 +95,9 @@ export default class R {
         }
 
         this.logger.debug(`Error when getPolicy, policyName is ${policyName}, error is: ${ex}`);
-        
+
         this.logger.info(this.stdoutFormatter.retry('policy', 'check policy not exist or ensure available', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
 
@@ -108,7 +109,7 @@ export default class R {
     roleDocument?: IRoleDocument,
   ): Promise<string> {
     try {
-      this.logger.info(this.stdoutFormatter.check('role', roleName))
+      this.logger.info(this.stdoutFormatter.check('role', roleName));
       const roleResponse = await this.ramClient.getRole({ RoleName: roleName });
 
       this.logger.debug(`${roleName} already exists.`);
@@ -134,7 +135,7 @@ export default class R {
   async createPolicy(policyName: string, statement: any, description?: string) {
     this.logger.info(this.stdoutFormatter.create('plicy', policyName));
 
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
         await this.ramClient.createPolicy({
           PolicyName: policyName,
@@ -150,7 +151,7 @@ export default class R {
         }
         this.logger.debug(`Error when createPolicy, policyName is ${policyName}, error is: ${ex}`);
         this.logger.info(this.stdoutFormatter.retry('policy', 'create policy', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
 
@@ -182,7 +183,7 @@ export default class R {
   async updatePolicy(policyName: string, statement: any) {
     this.logger.info(this.stdoutFormatter.update('plicy', policyName));
 
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
         const listResponse = await this.ramClient.listPolicyVersions({
           PolicyType: 'Custom',
@@ -210,7 +211,7 @@ export default class R {
 
         this.logger.debug(`Error when updatePolicy, policyName is ${policyName}, error is: ${ex}`);
         this.logger.info(this.stdoutFormatter.retry('plicy', 'update plicy', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
 
@@ -239,9 +240,9 @@ export default class R {
       `Delete policy ${policyName} ${deleteAll ? 'all' : 'single'} version start...`,
     );
 
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
-        for (let version of versions) {
+        for (const version of versions) {
           if (version.IsDefaultVersion === false) {
             this.logger.info(this.stdoutFormatter.remove('policy version', version.VersionId));
             await this.ramClient.deletePolicyVersion({
@@ -261,7 +262,7 @@ export default class R {
 
         this.logger.debug(`Error when deletePolicyVersion, policyName is ${policyName}, error is: ${ex}`);
         this.logger.info(this.stdoutFormatter.retry('policy', 'delete policy version', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
 
@@ -275,7 +276,6 @@ export default class R {
 
     for (const policy of policies) {
       if (_.isString(policy)) {
-        // @ts-ignore: 动态类型判断，是字符串
         const policyName: string = policy;
 
         let policyNameAvailable = await this.checkPolicyNotExistOrEnsureAvailable(
@@ -294,11 +294,9 @@ export default class R {
         }
         policyNamesArray.push({ name: policyName, type: 'Custom' });
       } else {
-        // @ts-ignore: 动态类型判断，是对象
         const { name, statement, description } = policy;
 
-        // @ts-ignore: 动态类型判断，是对象
-        let policyNameAvailable = await this.checkPolicyNotExistOrEnsureAvailable(
+        const policyNameAvailable = await this.checkPolicyNotExistOrEnsureAvailable(
           name,
           'Custom',
           statement,
@@ -309,7 +307,7 @@ export default class R {
           await this.createPolicy(name, statement, description);
         }
 
-        policyNamesArray.push({ name: name, type: 'Custom' });
+        policyNamesArray.push({ name, type: 'Custom' });
       }
     }
 
@@ -331,7 +329,7 @@ export default class R {
 
   async attachPolicysToRole(policyNamesArray: IPolicyName[], roleName: string) {
     let policies: any;
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
         this.logger.debug(`Get list policies for ${roleName} start...`);
 
@@ -351,15 +349,16 @@ export default class R {
           `Error when listPoliciesForRole, roleName is ${roleName}, error is: ${ex}`,
         );
         this.logger.info(this.stdoutFormatter.retry('policy', 'list policies for role', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
 
     for (const { name, type } of policyNamesArray) {
-      await retry(async (retry, times) => {
+      // eslint-disable-next-line no-loop-func
+      await retry(async (rty: (arg0: any) => void, times: any) => {
         this.logger.debug(`Attach policy(${name}) to ${roleName} start...`);
         try {
-          const policy = policies.Policies.Policy.find((item) => {
+          const policy = policies?.Policies?.Policy?.find((item: { PolicyName: string }) => {
             return _.toLower(item.PolicyName) === _.toLower(name);
           });
           if (policy) {
@@ -382,7 +381,7 @@ export default class R {
             `Error when attachPolicyToRole, roleName is ${roleName}, policyName is ${name}, policyType is ${type}, error is: ${ex}`,
           );
           this.logger.info(this.stdoutFormatter.retry('policy', 'attach policy to role', times));
-          retry(ex);
+          rty(ex);
         }
       }, RETRYOPTIONS);
     }
@@ -396,9 +395,9 @@ export default class R {
     const policyNamesArray = await this.mackPlicies(policies);
     this.logger.debug(`Ram component policies names: ${policyNamesArray}`);
 
-    this.logger.debug(`Request attachPolicysToRole start...`);
+    this.logger.debug('Request attachPolicysToRole start...');
     await this.attachPolicysToRole(policyNamesArray, propertie.name);
-    this.logger.debug(`Request attachPolicysToRole end.`);
+    this.logger.debug('Request attachPolicysToRole end.');
 
     return arn;
   }
@@ -412,7 +411,7 @@ export default class R {
       // @ts-ignore
       const policyName: string = item.name;
 
-      await retry(async (retry, times) => {
+      await retry(async (rty: (arg0: any) => void, times: number) => {
         try {
           const listPolicyVersionResponse = await this.ramClient.listPolicyVersions({
             PolicyType: 'Custom',
@@ -439,7 +438,7 @@ export default class R {
             `Error when deletePolicys, policyName is ${policyName}, error is: ${ex}`,
           );
           this.logger.info(this.stdoutFormatter.retry('policy', 'delete policy', times));
-          retry(ex);
+          rty(ex);
         }
       }, RETRYOPTIONS);
     }
@@ -447,7 +446,7 @@ export default class R {
 
   async deleteRole(roleName: string) {
     // 先删除 DetachPolicy
-    await retry(async (retry, times) => {
+    await retry(async (rty: (arg0: any) => void, times: number) => {
       try {
         const policies = await this.ramClient.listPoliciesForRole({
           RoleName: roleName,
@@ -475,7 +474,7 @@ export default class R {
 
         this.logger.debug(`Error when deleteRole, roleName is ${roleName}, error is: ${ex}`);
         this.logger.info(this.stdoutFormatter.retry('role', 'delete role', times));
-        retry(ex);
+        rty(ex);
       }
     }, RETRYOPTIONS);
   }

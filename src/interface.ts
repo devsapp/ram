@@ -1,5 +1,6 @@
 export interface IInputs {
   props: IProperties;
+  credentials: ICredentials;
   project: {
     component: string;
     access: string;
