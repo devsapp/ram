@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 // import Table from 'tty-table';
-import get from 'lodash.get';
+import { get } from 'lodash';
 import { help } from '@serverless-devs/core';
 
 const SINGLE_VARS = ['string', 'number', 'boolean', 'null', 'undefined'];
@@ -40,11 +40,12 @@ export default class BaseComponent {
 
   protected __report(reportData: ServerlessDevsReport.ReportData) {
     if (process && process.send) {
-      const { name, content } = reportData;
+      const { name, content, access } = reportData;
       process.send({
         action: 'resource',
         data: {
           name,
+          access,
           content: JSON.stringify(content),
         },
       });

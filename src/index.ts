@@ -41,7 +41,11 @@ export default class RamCompoent extends Base {
 
     const ram = new Ram(credentials);
     const arn = await ram.deploy(properties);
-    super.__report({ name: 'ram', content: { arn, role: properties.name } });
+    super.__report({
+      name: 'ram',
+      access: inputs.project?.access,
+      content: { arn, role: properties.name },
+    });
 
     this.logger.debug('Create ram success.');
     return arn;
@@ -71,7 +75,7 @@ export default class RamCompoent extends Base {
     const ram = new Ram(credentials);
     await ram.deleteRole(properties.name);
     await ram.deletePolicys(properties.policies || []);
-    super.__report({ name: 'ram', content: { arn: '', role: '' } });
+    super.__report({ name: 'ram', access: inputs.project?.access, content: { arn: '', role: '' } });
 
     this.logger.debug('Delete ram success.');
   }
