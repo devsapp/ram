@@ -1,7 +1,7 @@
 {
   "name": "ram",
   "main": "./dist/index.js",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "dependencies": {
     "@alicloud/ram": "^1.0.0",
     "@serverless-devs/core": "^0.0.x",
