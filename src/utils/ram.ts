@@ -353,6 +353,7 @@ export default class R {
       }
     }, RETRYOPTIONS);
 
+    const attachPolicys = [];
     for (const { name, type } of policyNamesArray) {
       // eslint-disable-next-line no-loop-func
       await retry(async (rty: (arg0: any) => void, times: any) => {
@@ -361,7 +362,7 @@ export default class R {
           const policy = policies?.Policies?.Policy?.find((item: { PolicyName: string }) => {
             return _.toLower(item.PolicyName) === _.toLower(name);
           });
-          if (policy) {
+          if (policy || attachPolicys.includes(name)) {
             this.logger.debug(`Policy(${name}) already exists in ${roleName}, skip attach.`);
           } else {
             await this.ramClient.attachPolicyToRole({
@@ -369,7 +370,7 @@ export default class R {
               PolicyName: name,
               RoleName: roleName,
             });
-
+            attachPolicys.push(name);
             this.logger.debug(`Attach policy(${name}) to ${roleName} success.`);
           }
         } catch (ex) {
