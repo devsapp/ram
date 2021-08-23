@@ -11,7 +11,8 @@ services:
       service: fc.aliyuncs.com # 授权主题
       policies:
         - FC-post-log-to-qwe123-lllll23123
-        - AdministratorAccess
+        - AliyunContainerRegistryReadOnlyAccess
+        - AliyunContainerRegistryReadOnlyAccess
         - name: policy-test
           statement: # 策略配置
             - Effect: Deny
