@@ -5,4 +5,5 @@ export default class RamCompoent extends Base {
     logger: ILogger;
     deploy(inputs: IInputs): Promise<string>;
     delete(inputs: any): Promise<void>;
+    remove(inputs: any): Promise<void>;
 }
