@@ -4,7 +4,8 @@ name: ramApp            #  项目名称
 
 services:
   ram-test: #  服务名称
-    component: ${path(../)}  # 组件名称
+    # component: ${path(../)}  # 组件名称
+    component: devsapp/ram@dev
     props: #  组件的属性值
       name: test-ram # 必填
       description: test-ram

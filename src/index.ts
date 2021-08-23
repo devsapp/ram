@@ -79,4 +79,8 @@ export default class RamCompoent extends Base {
 
     this.logger.debug('Delete ram success.');
   }
+
+  async remove(inputs) {
+    return await this.delete(inputs);
+  }
 }
