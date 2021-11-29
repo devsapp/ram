@@ -21,6 +21,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
           pip install requests
+      - name: NPM install
+        run: |
+          npm install
       - name: Build
         run: |
           npm run build
