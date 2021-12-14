@@ -5,7 +5,7 @@
   "autoInstall": false,
   "dependencies": {
     "@alicloud/ram": "^1.0.0",
-    "@serverless-devs/core": "^0.1.15-beta.2",
+    "@serverless-devs/core": "beta",
     "lodash": "^4.17.20",
     "promise-retry": "^2.0.1"
   },
