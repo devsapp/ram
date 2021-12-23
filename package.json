@@ -5,7 +5,7 @@
   "autoInstall": false,
   "dependencies": {
     "@alicloud/ram": "^1.0.0",
-    "@serverless-devs/core": "^0.0.x",
+    "@serverless-devs/core": "beta",
     "lodash": "^4.17.20",
     "promise-retry": "^2.0.1"
   },
@@ -14,19 +14,20 @@
     "@types/jest": "^26.0.10",
     "@types/lodash": "^4.14.168",
     "@types/node": "14",
+    "esbuild": "^0.14.0",
     "f2elint": "^0.4.4",
     "jest": "^26.4.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.2.0",
     "ts-loader": "^8.0.14",
-    "typescript": "^3.9.7",
-    "@vercel/ncc": "^0.24.0"
+    "typescript": "^3.9.7"
   },
   "scripts": {
     "start": "npm run dev",
     "dev": "npx tsc -w -p tsconfig.json",
     "prebuild": "rm -rf node_modules && rm -rf package-lock.json && npm i && rimraf dist",
-    "build": "npm run fix && npm run lint && ncc build src/index.ts -m -e @serverless-devs/core -o dist",
+    "build": "npm run fix && npm run lint && npm run esbuild",
+    "esbuild": "esbuild src/index.ts --bundle --log-level=error --minify --platform=node --format=cjs --target=node10.4 --external:@serverless-devs/core --outfile=dist/index.js",
     "test": "jest",
     "test:cov": "jest --coverage",
     "lint": "f2elint scan",
