@@ -15,7 +15,7 @@ export const HELP = [
   },
   {
     header: 'Usage',
-    content: '$ s deploy/delete <options> ',
+    content: '$ s deploy/delete/list <options> ',
   },
   {
     header: 'Options',

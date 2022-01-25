@@ -1,4 +1,11 @@
-import { HLogger, ILogger, getCredential, commandParse, reportComponent, help } from '@serverless-devs/core';
+import {
+  HLogger,
+  ILogger,
+  getCredential,
+  commandParse,
+  reportComponent,
+  help,
+} from '@serverless-devs/core';
 import { CONTEXT, HELP, CONTEXT_NAME } from './constant';
 import StdoutFormatter from './common/stdout-formatter';
 import { IInputs, IProperties } from './interface';
@@ -21,7 +28,7 @@ export default class RamCompoent extends Base {
     }
     await StdoutFormatter.initStdout();
 
-    const credentials = inputs.credentials || await getCredential(inputs.project?.access);
+    const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
     reportComponent(CONTEXT_NAME, {
       uid: credentials.AccountID,
       command: 'deploy',
@@ -31,10 +38,12 @@ export default class RamCompoent extends Base {
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
     if (properties.service && properties.statement) {
-      this.logger.warn(StdoutFormatter.stdoutFormatter.warn(
-        'deploy',
-        "The 'service' and 'statement' configurations exist at the same time, and the 'service' configuration is invalid and overwritten by the 'statement'",
-      ));
+      this.logger.warn(
+        StdoutFormatter.stdoutFormatter.warn(
+          'deploy',
+          "The 'service' and 'statement' configurations exist at the same time, and the 'service' configuration is invalid and overwritten by the 'statement'",
+        ),
+      );
     } else if (!(properties.service || properties.statement)) {
       throw new Error("'service' and 'statement' must have at least one configuration.");
     }
@@ -63,7 +72,7 @@ export default class RamCompoent extends Base {
     }
     await StdoutFormatter.initStdout();
 
-    const credentials = inputs.credentials || await getCredential(inputs.project?.access);
+    const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
     reportComponent(CONTEXT_NAME, {
       uid: credentials.AccountID,
       command: 'delete',
@@ -82,5 +91,33 @@ export default class RamCompoent extends Base {
 
   async remove(inputs) {
     return await this.delete(inputs);
+  }
+
+  async list(inputs: IInputs): Promise<any[]> {
+    this.logger.debug('List ram roles...');
+    this.logger.debug(`Input data is: ${JSON.stringify(inputs)}`);
+
+    const apts = { boolean: ['help'], alias: { help: 'h' } };
+    const commandData: any = commandParse({ args: inputs.args }, apts);
+    this.logger.debug(`Command data is: ${JSON.stringify(commandData)}`);
+    if (commandData.data?.help) {
+      help(HELP);
+      return;
+    }
+    await StdoutFormatter.initStdout();
+
+    const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
+    reportComponent(CONTEXT_NAME, {
+      uid: credentials.AccountID,
+      command: 'list',
+    });
+
+    const ram = new Ram(credentials);
+    const roles = await ram.listRoles();
+    this.logger.debug(`List roles success, response: ${JSON.stringify(roles)}`);
+    super.__report({ name: 'ram', access: inputs.project?.access, content: { arn: '', role: '' } });
+    this.logger.debug('List ram roles success.');
+
+    return roles;
   }
 }

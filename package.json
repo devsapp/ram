@@ -1,7 +1,7 @@
 {
   "name": "ram",
   "main": "./dist/index.js",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "autoInstall": false,
   "dependencies": {
     "@alicloud/ram": "^1.0.0",

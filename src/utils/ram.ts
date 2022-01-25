@@ -275,7 +275,7 @@ export default class R {
     );
   }
 
-  async mackPlicies(policies: Array<string | IPolicy>): Promise<IPolicyName[]> {
+  async makePolicies(policies: Array<string | IPolicy>): Promise<IPolicyName[]> {
     const policyNamesArray: IPolicyName[] = [];
 
     for (const policy of policies) {
@@ -294,7 +294,7 @@ export default class R {
 
         policyNameAvailable = await this.checkPolicyNotExistOrEnsureAvailable(policyName, 'Custom');
         if (!policyNameAvailable) {
-          throw new Error(`Check plicy ${policyName} does not exist.`);
+          throw new Error(`Check policy ${policyName} does not exist.`);
         }
         policyNamesArray.push({ name: policyName, type: 'Custom' });
       } else {
@@ -331,7 +331,7 @@ export default class R {
     return arn;
   }
 
-  async attachPolicysToRole(policyNamesArray: IPolicyName[], roleName: string) {
+  async attachPoliciesToRole(policyNamesArray: IPolicyName[], roleName: string) {
     let policies: any;
     await retry(async (rty: (arg0: any) => void, times: any) => {
       try {
@@ -392,17 +392,17 @@ export default class R {
     }
   }
 
-  async deploy(propertie: IProperties): Promise<string> {
-    const arn = await this.makeRole(propertie);
+  async deploy(properties: IProperties): Promise<string> {
+    const arn = await this.makeRole(properties);
 
-    const { policies = [] } = propertie;
+    const { policies = [] } = properties;
     this.logger.debug(`Ram component policies config: ${policies}`);
-    const policyNamesArray = await this.mackPlicies(policies);
+    const policyNamesArray = await this.makePolicies(policies);
     this.logger.debug(`Ram component policies names: ${policyNamesArray}`);
 
-    this.logger.debug('Request attachPolicysToRole start...');
-    await this.attachPolicysToRole(policyNamesArray, propertie.name);
-    this.logger.debug('Request attachPolicysToRole end.');
+    this.logger.debug('Request attachPoliciesToRole start...');
+    await this.attachPoliciesToRole(policyNamesArray, properties.name);
+    this.logger.debug('Request attachPoliciesToRole end.');
 
     return arn;
   }
@@ -484,5 +484,17 @@ export default class R {
         rty(ex);
       }
     }, RETRYOPTIONS);
+  }
+
+  async listRoles(): Promise<any[]> {
+    try {
+      this.logger.info(this.stdoutFormatter.create('role', 'list'));
+      const roles = await this.ramClient.listRoles();
+
+      return roles.Roles.Role;
+    } catch (ex) {
+      this.logger.debug(`Error when listRoles, error is: ${ex}`);
+      throw ex;
+    }
   }
 }
