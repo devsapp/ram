@@ -1,12 +1,5 @@
-import {
-  HLogger,
-  ILogger,
-  getCredential,
-  commandParse,
-  reportComponent,
-  help,
-} from '@serverless-devs/core';
-import { CONTEXT, HELP, CONTEXT_NAME } from './constant';
+import { HLogger, ILogger, getCredential, commandParse, help } from '@serverless-devs/core';
+import { CONTEXT, HELP } from './constant';
 import StdoutFormatter from './common/stdout-formatter';
 import { IInputs, IProperties } from './interface';
 import Ram from './utils/ram';
@@ -29,11 +22,6 @@ export default class RamCompoent extends Base {
     await StdoutFormatter.initStdout();
 
     const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
-    reportComponent(CONTEXT_NAME, {
-      uid: credentials.AccountID,
-      command: 'deploy',
-    });
-
     const properties: IProperties = inputs.props;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
@@ -73,11 +61,6 @@ export default class RamCompoent extends Base {
     await StdoutFormatter.initStdout();
 
     const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
-    reportComponent(CONTEXT_NAME, {
-      uid: credentials.AccountID,
-      command: 'delete',
-    });
-
     const properties: IProperties = inputs.Properties;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
@@ -107,11 +90,6 @@ export default class RamCompoent extends Base {
     await StdoutFormatter.initStdout();
 
     const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
-    reportComponent(CONTEXT_NAME, {
-      uid: credentials.AccountID,
-      command: 'list',
-    });
-
     const ram = new Ram(credentials);
     const roles = await ram.listRoles();
     this.logger.debug(`List roles success, response: ${JSON.stringify(roles)}`);
