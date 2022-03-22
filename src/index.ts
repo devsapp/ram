@@ -1,12 +1,13 @@
-import { HLogger, ILogger, getCredential, commandParse, help } from '@serverless-devs/core';
-import { CONTEXT, HELP } from './constant';
+import { getCredential, commandParse, help } from '@serverless-devs/core';
+import { HELP } from './constant';
 import StdoutFormatter from './common/stdout-formatter';
 import { IInputs, IProperties } from './interface';
 import Ram from './utils/ram';
 import Base from './common/base';
+import logger from './common/logger';
 
 export default class RamCompoent extends Base {
-  @HLogger(CONTEXT) logger: ILogger;
+  logger = logger;
 
   async deploy(inputs: IInputs): Promise<string> {
     this.logger.debug('Create ram start...');
@@ -36,7 +37,7 @@ export default class RamCompoent extends Base {
       throw new Error("'service' and 'statement' must have at least one configuration.");
     }
 
-    const ram = new Ram(credentials);
+    const ram = new Ram(credentials, properties.region, properties.serviceName, inputs.path?.configPath);
     const arn = await ram.deploy(properties);
     super.__report({
       name: 'ram',
@@ -61,7 +62,7 @@ export default class RamCompoent extends Base {
     await StdoutFormatter.initStdout();
 
     const credentials = inputs.credentials || (await getCredential(inputs.project?.access));
-    const properties: IProperties = inputs.Properties;
+    const properties: IProperties = inputs.props;
     this.logger.debug(`Properties values: ${JSON.stringify(properties)}.`);
 
     const ram = new Ram(credentials);
