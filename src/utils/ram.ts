@@ -1,11 +1,12 @@
 /* eslint-disable no-await-in-loop */
-import { HLogger, ILogger } from '@serverless-devs/core';
 import _ from 'lodash';
 import Ram from '@alicloud/ram';
 import retry from 'promise-retry';
-import { CONTEXT, RETRYOPTIONS } from '../constant';
+import { RETRYOPTIONS } from '../constant';
 import StdoutFormatter from '../common/stdout-formatter';
+import logger from '../common/logger';
 import { ICredentials, IProperties, IPolicy, IRoleDocument } from '../interface';
+import { writeCreatCache } from './cache';
 
 interface IPolicyName {
   name: string;
@@ -34,15 +35,24 @@ const getStatement = (service: string, statement: any): IRoleDocument => {
 };
 
 export default class R {
-  @HLogger(CONTEXT) logger: ILogger;
   ramClient: any;
+  logger = logger;
   stdoutFormatter = StdoutFormatter.stdoutFormatter;
+  accountID: string;
+  region: string;
+  serviceName: string;
+  configPath: string;
 
-  constructor(profile: ICredentials) {
+  constructor(profile: ICredentials, region?: string, serviceName?: string, configPath?: string) {
     let timeout = 10;
     if (process.env.ALIYUN_RAM_CLIENT_TIMEOUT) {
       timeout = parseInt(process.env.ALIYUN_RAM_CLIENT_TIMEOUT);
     }
+
+    this.accountID = profile.AccountID;
+    this.region = region;
+    this.serviceName = serviceName;
+    this.configPath = configPath;
 
     this.ramClient = new Ram({
       accessKeyId: profile.AccessKeyID,
@@ -157,6 +167,7 @@ export default class R {
       }
     }, RETRYOPTIONS);
 
+    await this.writeCreatCache({ policy: policyName });
     this.logger.debug(`Create plicy ${policyName} success.`);
   }
 
@@ -175,6 +186,7 @@ export default class R {
 
       this.logger.debug(`Get role ${name} response: ${JSON.stringify(role)}`);
       this.logger.debug(`Create role ${name} success, arn is ${role.Role.Arn}`);
+      await this.writeCreatCache({ roleArn: role.Role.Arn });
       return role.Role.Arn;
     } catch (ex) {
       this.logger.debug(`Error when createRole, roleName is ${name}, error is: ${ex}`);
@@ -496,5 +508,15 @@ export default class R {
       this.logger.debug(`Error when listRoles, error is: ${ex}`);
       throw ex;
     }
+  }
+
+  private async writeCreatCache(data) {
+    await writeCreatCache({
+      accountID: this.accountID,
+      region: this.region,
+      serviceName: this.serviceName,
+      configPath: this.configPath,
+      ...data,
+    });
   }
 }

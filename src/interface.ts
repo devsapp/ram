@@ -25,6 +25,9 @@ export interface IProperties {
   description?: string;
   statement?: IStatement[];
   policies: Array<string | IPolicy>;
+  // 用于计入函数缓存
+  serviceName?: string;
+  region?: string;
 }
 
 export interface IPolicy {
