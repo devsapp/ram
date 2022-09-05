@@ -3,10 +3,9 @@ import { HELP } from './constant';
 import StdoutFormatter from './common/stdout-formatter';
 import { IInputs, IProperties } from './interface';
 import Ram from './utils/ram';
-import Base from './common/base';
 import logger from './common/logger';
 
-export default class RamCompoent extends Base {
+export default class RamCompoent {
   logger = logger;
 
   async deploy(inputs: IInputs): Promise<string> {
@@ -39,11 +38,6 @@ export default class RamCompoent extends Base {
 
     const ram = new Ram(credentials, properties.region, properties.serviceName, inputs.path?.configPath);
     const arn = await ram.deploy(properties);
-    super.__report({
-      name: 'ram',
-      access: inputs.project?.access,
-      content: { arn, role: properties.name },
-    });
 
     this.logger.debug('Create ram success.');
     return arn;
@@ -68,7 +62,6 @@ export default class RamCompoent extends Base {
     const ram = new Ram(credentials);
     await ram.deleteRole(properties.name);
     await ram.deletePolicys(properties.policies || []);
-    super.__report({ name: 'ram', access: inputs.project?.access, content: { arn: '', role: '' } });
 
     this.logger.debug('Delete ram success.');
   }
@@ -94,9 +87,14 @@ export default class RamCompoent extends Base {
     const ram = new Ram(credentials);
     const roles = await ram.listRoles();
     this.logger.debug(`List roles success, response: ${JSON.stringify(roles)}`);
-    super.__report({ name: 'ram', access: inputs.project?.access, content: { arn: '', role: '' } });
     this.logger.debug('List ram roles success.');
 
     return roles;
+  }
+
+  async check(inputs: IInputs): Promise<boolean> {
+
+    
+    return true;
   }
 }
