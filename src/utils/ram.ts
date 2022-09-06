@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import _ from 'lodash';
+import { popCore } from '@serverless-devs/core';
 import Ram from '@alicloud/ram';
 import retry from 'promise-retry';
 import { RETRYOPTIONS } from '../constant';
@@ -35,6 +36,22 @@ const getStatement = (service: string, statement: any): IRoleDocument => {
 };
 
 export default class R {
+  static async serviceLinkedRole(credentials: ICredentials, serviceName: string): Promise<any> {
+    const client = new popCore({
+      accessKeyId: credentials.AccessKeyID,
+      accessKeySecret: credentials.AccessKeySecret,
+       // @ts-ignore
+      securityToken: credentials.SecurityToken,
+      endpoint: 'https://resourcemanager.aliyuncs.com',
+      apiVersion: '2020-03-31'
+    });
+
+    return await client.request('CreateServiceLinkedRole', { ServiceName: serviceName }, {
+      method: 'POST',
+      formatParams: false,
+    });
+  }
+
   ramClient: any;
   logger = logger;
   stdoutFormatter = StdoutFormatter.stdoutFormatter;
@@ -518,5 +535,16 @@ export default class R {
       configPath: this.configPath,
       ...data,
     });
+  }
+
+  async getRole(roleName): Promise<any> {
+    try {
+      return await this.ramClient.getRole({ RoleName: roleName });
+    } catch (ex) {
+      if (ex.name !== 'EntityNotExist.RoleError') {
+        throw ex;
+      }
+      return false;
+    }
   }
 }
