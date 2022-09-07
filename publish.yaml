@@ -2,7 +2,7 @@ Type: Component
 Name: ram
 Provider:
   - 阿里云
-Version: 0.0.18
+Version: 0.0.19
 Description: 阿里云RAM产品工具
 HomePage: https://github.com/devsapp/ram
 Tags: #标签详情
