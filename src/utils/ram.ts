@@ -40,10 +40,10 @@ export default class R {
     const client = new popCore({
       accessKeyId: credentials.AccessKeyID,
       accessKeySecret: credentials.AccessKeySecret,
-       // @ts-ignore
+      // @ts-ignore
       securityToken: credentials.SecurityToken,
       endpoint: 'https://resourcemanager.aliyuncs.com',
-      apiVersion: '2020-03-31'
+      apiVersion: '2020-03-31',
     });
 
     return await client.request('CreateServiceLinkedRole', { ServiceName: serviceName }, {
@@ -539,7 +539,9 @@ export default class R {
 
   async getRole(roleName): Promise<any> {
     try {
-      return await this.ramClient.getRole({ RoleName: roleName });
+      const res = await this.ramClient.getRole({ RoleName: roleName });
+      logger.debug(`get role res: ${JSON.stringify(res)}`);
+      return true;
     } catch (ex) {
       if (ex.name !== 'EntityNotExist.RoleError') {
         throw ex;
