@@ -10,6 +10,7 @@ services:
       name: test-ram # 必填
       description: test-ram
       service: fc.aliyuncs.com # 授权主题
+      # statement: 信任策略
       policies:
         - FC-post-log-to-qwe123-lllll23123
         - AliyunContainerRegistryReadOnlyAccess
